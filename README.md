@@ -19,3 +19,8 @@ make program
 screen /dev/ttyUSB0 9600,cs8  # options must match those into main.c
 ```
 
+## Additional reference
+
+* https://www.nongnu.org/avr-libc/user-manual/modules.html
+* https://www.arnabkumardas.com/arduino-tutorial/usart-register-description/
+
