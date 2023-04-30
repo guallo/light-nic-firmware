@@ -7,10 +7,18 @@
 #define BAUD 9600
 #include <util/setbaud.h>
 
+static int uart_getchar(FILE *stream);
 static int uart_putchar(char c, FILE *stream);
 
+static FILE uart_rx = FDEV_SETUP_STREAM(NULL, uart_getchar, _FDEV_SETUP_READ);
 static FILE uart_tx = FDEV_SETUP_STREAM(uart_putchar, NULL, _FDEV_SETUP_WRITE);
 
+
+static int
+uart_getchar(FILE *stream) {
+  loop_until_bit_is_set(UCSR0A, RXC0);  // Wait until data exists
+  return UDR0;
+}
 
 static int
 uart_putchar(char c, FILE *stream)
@@ -40,11 +48,20 @@ uart_init(void)
 
 int main(void)
 {
+  char input;
+  
   uart_init();
 
+  stdin = &uart_rx;
   stdout = &uart_tx;
 
-  printf("%s", "hello from arduino nano! :)\n");
+  printf("%s", "hello from arduino nano! :)\r\n");
+  
+  while (1) {
+    printf("%s", "press a key...\r\n");
+    input = getchar();
+    printf("I got: %c\r\n", input);
+  }
 
   return 0;
 }
